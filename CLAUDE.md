@@ -74,6 +74,10 @@ This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structu
 - Unit tests: Vitest + React Testing Library
 - Test files colocated: `ComponentName.test.tsx` next to the component
 - Test naming: `describe('ComponentName')` → `it('should ...')`
+- Testing strategy and TDD rules: see `.claude/rules/testing-strategy.md`
+- Components, hooks, utils, core logic: **must have tests (TDD)**
+- Bug fixes: **must write a failing test first**, then fix
+- Pure style/layout changes: no tests required
 
 ## Git Conventions
 

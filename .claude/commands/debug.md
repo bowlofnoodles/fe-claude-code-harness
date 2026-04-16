@@ -26,6 +26,7 @@ Follow the systematic debugging protocol:
 
 ### Step 4: Verify
 - Reproduce the original issue — confirm it's fixed
-- Run related tests: `pnpm test -- --reporter=verbose`
-- Check for regressions in related features
+- **Write a failing test that reproduces the bug first** (see `.claude/rules/testing-strategy.md`)
+- Fix the code to make the test pass
+- Run `pnpm test -- --reporter=verbose` to confirm fix and check for regressions
 - Use the `superpowers:verification-before-completion` skill before claiming done

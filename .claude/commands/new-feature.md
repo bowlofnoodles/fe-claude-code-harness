@@ -40,7 +40,7 @@ Follow this workflow strictly. Each phase must complete before moving to the nex
 
 ### Phase 3: Implement
 1. Run `/opsx:apply` to start implementing from tasks.md
-2. Use TDD where applicable — write tests before implementation
+2. Follow `.claude/rules/testing-strategy.md` — for components, hooks, utils, and core logic, strict TDD (Red-Green-Refactor)
 3. For UI components: delegate to `component-builder` agent if appropriate
 4. Start dev server (`pnpm dev`) and verify visually for any UI work
 

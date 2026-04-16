@@ -239,6 +239,7 @@ npm install -g @fission-ai/openspec@latest
 │   ├── state-management.md        # Zustand 状态管理规范
 │   ├── openspec-workflow.md       # OpenSpec 规则和目录布局
 │   ├── debugging.md               # 5 步调试协议
+│   ├── testing-strategy.md        # 测试策略：什么时候必须写测试、TDD 流程
 │   └── git-workflow.md            # 分支和提交规范
 ├── commands/                      # 斜杠命令（工作流）
 │   ├── new-feature.md             # /new-feature — 完整功能开发流程
@@ -263,6 +264,7 @@ npm install -g @fission-ai/openspec@latest
 | `state-management.md` | 操作 Zustand store 时 |
 | `openspec-workflow.md` | 规划功能或编写规格时 |
 | `debugging.md` | 调查 bug 或错误时 |
+| `testing-strategy.md` | 写新代码、修 bug、重构时 |
 | `git-workflow.md` | 提交代码或创建分支时 |
 
 ---
