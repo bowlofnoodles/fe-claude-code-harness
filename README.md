@@ -39,10 +39,18 @@
 
 ## :zap: 快速开始
 
-### 一键安装（推荐）
+### :sparkles: 新项目（React + Vite + Tailwind）
+
+一键创建全新项目，自带完整技术栈和 harness 配置：
 
 ```bash
+# 远程一键安装
 curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- my-new-app
+
+# 或者先克隆再执行
+git clone git@github.com:bowlofnoodles/fe-claude-code-harness.git
+cd fe-claude-code-harness
+./install.sh my-new-app
 ```
 
 <details>
@@ -61,28 +69,53 @@ curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harnes
 
 </details>
 
+### :syringe: 存量项目（任意技术栈）
+
+已有项目只需注入 harness 骨架，不改动项目代码和依赖：
+
+```bash
+# 在项目根目录执行
+curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- --inject
+
+# 或者
+cd my-existing-project
+/path/to/install.sh --inject
+```
+
+<details>
+<summary>:mag: <code>--inject</code> 做了什么</summary>
+
+| 步骤 | 操作 |
+|:----:|------|
+| 1 | :robot: 注入 `.claude/` 目录（commands、agents、通用 rules） |
+| 2 | :page_facing_up: 创建骨架 `CLAUDE.md`（待 `/init-project` 填充） |
+| 3 | :shield: 创建最小化 `settings.json`（通用权限） |
+| 4 | :scroll: 安装 OpenSpec + `openspec init` |
+| 5 | :sparkles: 安装 Superpowers 插件 |
+
+**不会**：修改项目代码、安装依赖、改动配置文件、覆盖已有 `.claude/settings.local.json`
+
+</details>
+
+注入后打开 Claude Code，执行 `/init-project`：
+
+```bash
+claude
+# 在 Claude Code 中执行：
+/init-project
+```
+
+`/init-project` 会自动：
+- 读取 `package.json`、`tsconfig.json`、配置文件等
+- 识别框架、构建工具、包管理器、测试框架、样式方案
+- 生成定制化的 `CLAUDE.md`（正确的命令和规范）
+- 生成匹配技术栈的 `.claude/rules/`（如 Vue 项目生成 Vue 规范，非 Tailwind 项目不生成 Tailwind 规则）
+- 更新 `settings.json` 权限（匹配实际的包管理器）
+
 > :bulb: 如果 Superpowers 自动安装失败，在 Claude Code 中手动执行：
 > ```
 > /plugin install superpowers@claude-plugins-official
 > ```
-
-### 克隆后执行
-
-```bash
-git clone git@github.com:bowlofnoodles/fe-claude-code-harness.git
-cd fe-claude-code-harness
-./install.sh my-new-app
-```
-
-### 直接克隆为模板
-
-```bash
-git clone git@github.com:bowlofnoodles/fe-claude-code-harness.git my-new-app
-cd my-new-app
-rm -rf .git && git init
-```
-
-然后手动用 `pnpm create vite` 初始化项目，再把 `.claude/` 目录和 `CLAUDE.md` 复制过去。
 
 
 ---
@@ -168,6 +201,7 @@ rm -rf .git && git init
 
 | 命令 | 说明 |
 |------|------|
+| `/init-project` | 自动检测技术栈，生成定制化 `CLAUDE.md` + rules（存量项目必用） |
 | `/new-feature <描述>` | 完整流程：脑暴 -> OpenSpec 提案 -> 实现 -> 交付 |
 | `/debug <描述>` | 系统化调试：复现 -> 定位 -> 诊断 -> 修复 -> 验证 |
 | `/design-system <名称\|init>` | 初始化设计系统或新增组件 |
@@ -242,6 +276,7 @@ npm install -g @fission-ai/openspec@latest
 │   ├── testing-strategy.md        # 测试策略：什么时候必须写测试、TDD 流程
 │   └── git-workflow.md            # 分支和提交规范
 ├── commands/                      # 斜杠命令（工作流）
+│   ├── init-project.md             # /init-project — 自动检测技术栈，生成配置
 │   ├── new-feature.md             # /new-feature — 完整功能开发流程
 │   ├── debug.md                   # /debug — 系统化 bug 修复
 │   ├── design-system.md           # /design-system — 初始化或扩展设计系统
