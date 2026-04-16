@@ -4,8 +4,10 @@
       "Edit(*)",
       "Write(*)",
       "NotebookEdit(*)",
-      "Bash(npm run *)",
+      "Bash(pnpm *)",
+      "Bash(pnpm run *)",
       "Bash(npx *)",
+      "Bash(pnpx *)",
       "Bash(node *)",
       "Bash(git *)",
       "Bash(gh *)",
@@ -29,23 +31,16 @@
     "ask": [
       "Bash(rm *)",
       "Bash(rmdir *)",
-      "Bash(npm install *)",
-      "Bash(npm uninstall *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm remove *)",
       "Bash(docker *)",
       "Bash(kill *)",
       "Bash(killall *)"
     ]
   },
-  "env": {
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
-  },
   "plansDirectory": "./docs/plans",
   "outputStyle": "Explanatory",
   "respectGitignore": true,
-  "attribution": {
-    "commit": "Co-Authored-By: Claude <noreply@anthropic.com>",
-    "pr": "Generated with [Claude Code](https://claude.ai/code)"
-  },
   "hooks": {
     "PostToolUse": [
       {

@@ -7,10 +7,10 @@ description: Run full quality gates and fix any issues found
 Run all quality gates and report results:
 
 ```bash
-npm run lint
-npm run type-check
-npm run test
-npm run build
+pnpm lint
+pnpm type-check
+pnpm test
+pnpm build
 ```
 
 For each failure:

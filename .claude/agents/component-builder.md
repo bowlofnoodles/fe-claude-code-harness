@@ -22,4 +22,4 @@ You are a React component builder specialized in this project's stack: React + T
 2. Read `tailwind.config.ts` for available design tokens
 3. Create the component with proper types, variants, and sizes
 4. Write tests for the component
-5. Run `npm run type-check` and `npm run test` to verify
+5. Run `pnpm type-check` and `pnpm test` to verify

@@ -12,7 +12,7 @@ Follow the systematic debugging protocol:
 ### Step 1: Reproduce
 - Read the bug description carefully
 - Identify the expected vs actual behavior
-- If possible, start the dev server (`npm run dev`) and reproduce in browser
+- If possible, start the dev server (`pnpm dev`) and reproduce in browser
 
 ### Step 2: Investigate
 - Use the `superpowers:systematic-debugging` skill
@@ -26,6 +26,6 @@ Follow the systematic debugging protocol:
 
 ### Step 4: Verify
 - Reproduce the original issue — confirm it's fixed
-- Run related tests: `npm run test -- --reporter=verbose`
+- Run related tests: `pnpm test -- --reporter=verbose`
 - Check for regressions in related features
 - Use the `superpowers:verification-before-completion` skill before claiming done

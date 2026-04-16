@@ -2,6 +2,7 @@
 
 ## React & Tailwind Conventions
 
+- **Before writing any UI component, read `DESIGN.md` at project root** — it defines colors, typography, spacing, and component patterns. If `DESIGN.md` does not exist yet, run `/design-system init` first
 - Use function components with TypeScript, always with explicit prop types
 - Named exports only, no default exports
 - Use `cn()` utility (clsx + tailwind-merge) for conditional class composition

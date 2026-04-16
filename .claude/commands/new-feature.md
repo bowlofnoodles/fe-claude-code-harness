@@ -42,13 +42,13 @@ Follow this workflow strictly. Each phase must complete before moving to the nex
 1. Run `/opsx:apply` to start implementing from tasks.md
 2. Use TDD where applicable — write tests before implementation
 3. For UI components: delegate to `component-builder` agent if appropriate
-4. Start dev server (`npm run dev`) and verify visually for any UI work
+4. Start dev server (`pnpm dev`) and verify visually for any UI work
 
 ---
 
 ### Phase 4: Verify & Ship
 1. Run `/opsx:verify` to validate implementation matches specs
-2. Run quality gates: `npm run lint && npm run type-check && npm run test`
+2. Run quality gates: `pnpm lint && pnpm type-check && pnpm test`
 3. Use `superpowers:verification-before-completion` to confirm everything works
 4. Run `/opsx:archive` to finalize the change and sync specs
 5. Commit with conventional commit format

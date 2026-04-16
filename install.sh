@@ -21,14 +21,22 @@ error() { echo -e "${RED}[error]${NC} $1"; exit 1; }
 PROJECT_NAME="${1:-}"
 if [ -z "$PROJECT_NAME" ]; then
   echo ""
-  echo "Usage: ./install.sh <project-name>"
+  echo "Usage:"
+  echo "  ./install.sh <project-name>"
+  echo "  curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- <project-name>"
   echo ""
   echo "Creates a new React + Vite + Tailwind project with Claude Code harness."
   exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_RAW="https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)"
 TARGET_DIR="$(pwd)/$PROJECT_NAME"
+
+# Detect if running via curl pipe (no local repo available)
+is_remote() {
+  [ ! -f "$SCRIPT_DIR/CLAUDE.md" ] 2>/dev/null
+}
 
 if [ -d "$TARGET_DIR" ]; then
   error "Directory $TARGET_DIR already exists!"
@@ -36,14 +44,14 @@ fi
 
 # --- Step 1: Create Vite project ---
 log "Creating Vite + React + TypeScript project..."
-npm create vite@latest "$PROJECT_NAME" -- --template react-ts
+pnpm create vite "$PROJECT_NAME" --template react-ts
 cd "$TARGET_DIR"
 success "Vite project created"
 
 # --- Step 2: Install dependencies ---
 log "Installing dependencies..."
-npm install
-npm install react-router-dom zustand
+pnpm install
+pnpm add react-router-dom zustand
 success "Core dependencies installed"
 
 # --- Step 3: Install dev dependencies ---
@@ -55,10 +63,10 @@ if ! command -v openspec &> /dev/null; then
   success "OpenSpec installed"
 fi
 
-npm install -D tailwindcss @tailwindcss/vite
-npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
-npm install -D clsx tailwind-merge
-npm install -D prettier prettier-plugin-tailwindcss
+pnpm add -D tailwindcss @tailwindcss/vite
+pnpm add -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+pnpm add -D clsx tailwind-merge
+pnpm add -D prettier prettier-plugin-tailwindcss
 success "Dev dependencies installed"
 
 # --- Step 4: Configure Tailwind ---
@@ -144,12 +152,12 @@ TSCONFIG_EOF
 
 success "TypeScript configured"
 
-# --- Step 6: Create project structure ---
-log "Creating project structure..."
-mkdir -p src/{app,components/{ui,layout},features,hooks,lib,styles,types,assets}
-mkdir -p docs/plans
+# --- Step 6: Create project directories ---
+log "Creating project directories..."
+mkdir -p src/{app,components/{ui,layout},features,hooks,lib/stores,styles,types,assets}
+mkdir -p docs/{plans,business}
 
-# cn utility
+# cn utility — always needed for Tailwind class composition
 cat > src/lib/cn.ts << 'CN_EOF'
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -159,79 +167,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 CN_EOF
 
-# Test setup
-cat > src/test-setup.ts << 'TESTSETUP_EOF'
-import "@testing-library/jest-dom/vitest";
-TESTSETUP_EOF
+success "Project directories created"
 
-# App shell
-cat > src/app/App.tsx << 'APP_EOF'
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router";
-
-export function App() {
-  return <RouterProvider router={router} />;
-}
-APP_EOF
-
-# Router config
-cat > src/app/router.tsx << 'ROUTER_EOF'
-import { createBrowserRouter } from "react-router-dom";
-
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <div className="p-8 text-center"><h1 className="text-3xl font-bold">Hello World</h1></div>,
-  },
-]);
-ROUTER_EOF
-
-# Example zustand store
-mkdir -p src/lib/stores
-cat > src/lib/stores/app-store.ts << 'STORE_EOF'
-import { create } from "zustand";
-
-interface AppStore {
-  theme: "light" | "dark";
-  toggleTheme: () => void;
-}
-
-export const useAppStore = create<AppStore>()((set) => ({
-  theme: "light",
-  toggleTheme: () =>
-    set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
-}));
-STORE_EOF
-
-# Update main.tsx
-cat > src/main.tsx << 'MAIN_EOF'
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { App } from "./app/App";
-import "./index.css";
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
-MAIN_EOF
-
-# Prettier config
-cat > .prettierrc << 'PRETTIER_EOF'
-{
-  "semi": true,
-  "singleQuote": false,
-  "tabWidth": 2,
-  "trailingComma": "all",
-  "plugins": ["prettier-plugin-tailwindcss"]
-}
-PRETTIER_EOF
-
-success "Project structure created"
-
-# --- Step 7: Add npm scripts ---
-log "Adding npm scripts..."
+# --- Step 7: Add scripts ---
+log "Adding scripts..."
 # Use node to update package.json scripts
 node -e "
 const pkg = require('./package.json');
@@ -249,27 +188,70 @@ pkg.scripts = {
 };
 require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
 "
-success "npm scripts added"
+success "Scripts added"
 
-# --- Step 8: Copy Claude Code harness ---
+# --- Step 8: Set up Claude Code harness ---
 log "Setting up Claude Code harness..."
 
-# Copy CLAUDE.md
-cp "$SCRIPT_DIR/CLAUDE.md" ./CLAUDE.md
+# Helper: download a file from the repo
+fetch_file() {
+  local remote_path="$1"
+  local local_path="$2"
+  mkdir -p "$(dirname "$local_path")"
+  curl -fsSL "$REPO_RAW/$remote_path" -o "$local_path"
+}
 
-# Copy .claude directory
-cp -r "$SCRIPT_DIR/.claude" ./.claude
+if is_remote; then
+  log "Downloading harness from GitHub..."
 
-# Copy .gitignore (merge with existing if present)
-if [ -f .gitignore ]; then
-  # Append our entries that aren't already present
-  while IFS= read -r line; do
-    if [ -n "$line" ] && ! grep -qF "$line" .gitignore 2>/dev/null; then
-      echo "$line" >> .gitignore
-    fi
-  done < "$SCRIPT_DIR/.gitignore"
+  # CLAUDE.md
+  fetch_file "CLAUDE.md" "./CLAUDE.md"
+
+  # .gitignore extras
+  TEMP_GITIGNORE=$(mktemp)
+  curl -fsSL "$REPO_RAW/.gitignore" -o "$TEMP_GITIGNORE"
+  if [ -f .gitignore ]; then
+    while IFS= read -r line; do
+      if [ -n "$line" ] && ! grep -qF "$line" .gitignore 2>/dev/null; then
+        echo "$line" >> .gitignore
+      fi
+    done < "$TEMP_GITIGNORE"
+  else
+    cp "$TEMP_GITIGNORE" ./.gitignore
+  fi
+  rm -f "$TEMP_GITIGNORE"
+
+  # .claude directory — download each file
+  mkdir -p .claude/{agents,commands,rules,skills,hooks/scripts}
+
+  fetch_file ".claude/settings.json"                     ".claude/settings.json"
+  fetch_file ".claude/agents/component-builder.md"       ".claude/agents/component-builder.md"
+  fetch_file ".claude/agents/feature-reviewer.md"        ".claude/agents/feature-reviewer.md"
+  fetch_file ".claude/commands/new-feature.md"           ".claude/commands/new-feature.md"
+  fetch_file ".claude/commands/debug.md"                 ".claude/commands/debug.md"
+  fetch_file ".claude/commands/design-system.md"         ".claude/commands/design-system.md"
+  fetch_file ".claude/commands/clarify-business.md"      ".claude/commands/clarify-business.md"
+  fetch_file ".claude/commands/quality-check.md"         ".claude/commands/quality-check.md"
+  fetch_file ".claude/rules/frontend-conventions.md"     ".claude/rules/frontend-conventions.md"
+  fetch_file ".claude/rules/state-management.md"         ".claude/rules/state-management.md"
+  fetch_file ".claude/rules/openspec-workflow.md"        ".claude/rules/openspec-workflow.md"
+  fetch_file ".claude/rules/debugging.md"                ".claude/rules/debugging.md"
+  fetch_file ".claude/rules/git-workflow.md"             ".claude/rules/git-workflow.md"
+
 else
-  cp "$SCRIPT_DIR/.gitignore" ./.gitignore
+  # Local mode — copy from cloned repo
+  cp "$SCRIPT_DIR/CLAUDE.md" ./CLAUDE.md
+  cp -r "$SCRIPT_DIR/.claude" ./.claude
+
+  if [ -f .gitignore ]; then
+    while IFS= read -r line; do
+      if [ -n "$line" ] && ! grep -qF "$line" .gitignore 2>/dev/null; then
+        echo "$line" >> .gitignore
+      fi
+    done < "$SCRIPT_DIR/.gitignore"
+  else
+    cp "$SCRIPT_DIR/.gitignore" ./.gitignore
+  fi
 fi
 
 success "Claude Code harness installed"
@@ -291,6 +273,21 @@ Includes: Claude Code harness (.claude/, CLAUDE.md) with commands, agents, and r
 Co-Authored-By: Claude <noreply@anthropic.com>"
 success "Git initialized with initial commit"
 
+# --- Step 10: Install Superpowers plugin ---
+log "Installing Superpowers skill..."
+
+# Superpowers is a Claude Code plugin, installed via the claude CLI
+# Try the official marketplace first, fallback to alternative
+if command -v claude &> /dev/null; then
+  # Use --yes to auto-confirm, run in project directory
+  claude -p "Run /plugin install superpowers@claude-plugins-official" --yes 2>/dev/null \
+    || claude -p "/plugin marketplace add obra/superpowers-marketplace && /plugin install superpowers@superpowers-marketplace" --yes 2>/dev/null \
+    || warn "Auto-install failed. Install manually in Claude Code (see below)"
+  success "Superpowers plugin installed"
+else
+  warn "Claude CLI not found. Install Superpowers manually after setup."
+fi
+
 # --- Done ---
 echo ""
 echo -e "${GREEN}============================================================${NC}"
@@ -298,8 +295,11 @@ echo -e "${GREEN} Project '$PROJECT_NAME' created successfully!${NC}"
 echo -e "${GREEN}============================================================${NC}"
 echo ""
 echo "  cd $PROJECT_NAME"
-echo "  npm run dev        # Start dev server"
+echo "  pnpm dev           # Start dev server"
 echo "  claude             # Open Claude Code"
+echo ""
+echo -e "  ${YELLOW}[!] If Superpowers didn't auto-install, run this in Claude Code:${NC}"
+echo "    /plugin install superpowers@claude-plugins-official"
 echo ""
 echo "  Claude Code commands:"
 echo "    /new-feature     # Brainstorm → OpenSpec propose → implement → ship"

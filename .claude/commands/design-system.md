@@ -12,13 +12,18 @@ Target: **$ARGUMENTS**
 2. For personal projects:
    - Fetch design spec from getdesign.md
    - Extract colors, typography, spacing, border-radius, shadows
-   - Map to `tailwind.config.ts` theme extensions
 3. For client projects:
    - Ask for the prototype/mockup
    - Extract design tokens manually from the prototype
-   - Map to `tailwind.config.ts` theme extensions
-4. Create base components in `src/components/ui/`: Button, Input, Select, Card, Badge, Modal, etc.
-5. Create `src/lib/cn.ts` with clsx + tailwind-merge utility
+4. **Write `DESIGN.md` at project root** — this is the single source of truth for all visual decisions. Include:
+   - Color palette (primary, secondary, neutral, semantic colors)
+   - Typography scale (font families, sizes, weights, line heights)
+   - Spacing scale
+   - Border radius, shadows
+   - Breakpoints
+   - Component design patterns and variants
+5. Map tokens from `DESIGN.md` to `tailwind.config.ts` theme extensions
+6. Create base components in `src/components/ui/`: Button, Input, Select, Card, Badge, Modal, etc.
 
 ### If component name — Add/Extend Component
 1. Check existing components in `src/components/ui/`

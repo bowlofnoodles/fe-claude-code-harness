@@ -8,16 +8,16 @@ Frontend project template with Claude Code harness. Tech stack: **React + Vite +
 
 ```bash
 # Dev
-npm run dev          # Start dev server (Vite)
-npm run build        # Production build
-npm run preview      # Preview production build
-npm run lint         # ESLint check
-npm run type-check   # TypeScript type check (tsc --noEmit)
-npm run test         # Run vitest
-npm run test:ui      # Vitest with UI
+pnpm dev             # Start dev server (Vite)
+pnpm build           # Production build
+pnpm preview         # Preview production build
+pnpm lint            # ESLint check
+pnpm type-check      # TypeScript type check (tsc --noEmit)
+pnpm test            # Run vitest
+pnpm test:ui         # Vitest with UI
 
 # Quality gates (run before commit)
-npm run lint && npm run type-check && npm run test
+pnpm lint && pnpm type-check && pnpm test
 ```
 
 ## Project Structure
@@ -31,13 +31,7 @@ src/
 ├── components/       # Shared UI components
 │   ├── ui/           # Base design system components (Button, Input, etc.)
 │   └── layout/       # Layout components (Header, Sidebar, etc.)
-├── features/         # Feature modules (domain-driven)
-│   └── [feature]/
-│       ├── components/
-│       ├── hooks/
-│       ├── api/
-│       ├── types.ts
-│       └── index.ts  # Public barrel export
+├── features/         # Feature modules
 ├── hooks/            # Shared custom hooks
 ├── lib/              # Utilities, helpers, constants
 ├── styles/           # Global styles, Tailwind config extensions
@@ -57,10 +51,12 @@ src/
 
 ## Design System
 
+- Design spec is documented in `DESIGN.md` at project root (generated via `/design-system init`)
+- **Before writing any UI component, read `DESIGN.md` first** — it is the single source of truth for visual decisions
 - Components in `src/components/ui/` follow a consistent API pattern
-- All colors, spacing, typography defined in `tailwind.config.ts`
-- For personal projects: design tokens sourced from getdesign.md
-- For client projects: design tokens built from prototypes on top of Tailwind defaults
+- All colors, spacing, typography defined in `tailwind.config.ts` based on `DESIGN.md` tokens
+- For personal projects: design tokens sourced from getdesign.md → `DESIGN.md`
+- For client projects: design tokens extracted from prototypes → `DESIGN.md`
 
 ## Spec-Driven Development (OpenSpec)
 
@@ -87,7 +83,7 @@ This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) for structu
 
 ## Critical Rules
 
-- NEVER modify `package-lock.json` manually
+- NEVER modify `pnpm-lock.yaml` manually
 - NEVER commit `.env` files or secrets
 - Always run quality gates before committing
 - Start with plan mode for any feature > 1 component
