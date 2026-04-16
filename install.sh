@@ -29,7 +29,6 @@ if [ -z "$PROJECT_NAME" ]; then
   exit 1
 fi
 
-REPO_RAW="https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)"
 TARGET_DIR="$(pwd)/$PROJECT_NAME"
 
@@ -193,65 +192,39 @@ success "Scripts added"
 # --- Step 8: Set up Claude Code harness ---
 log "Setting up Claude Code harness..."
 
-# Helper: download a file from the repo
-fetch_file() {
-  local remote_path="$1"
-  local local_path="$2"
-  mkdir -p "$(dirname "$local_path")"
-  curl -fsSL "$REPO_RAW/$remote_path" -o "$local_path"
-}
+REPO_URL="https://github.com/bowlofnoodles/fe-claude-code-harness.git"
 
-if is_remote; then
-  log "Downloading harness from GitHub..."
-
-  # CLAUDE.md
-  fetch_file "CLAUDE.md" "./CLAUDE.md"
-
-  # .gitignore extras
-  TEMP_GITIGNORE=$(mktemp)
-  curl -fsSL "$REPO_RAW/.gitignore" -o "$TEMP_GITIGNORE"
+# Helper: merge .gitignore entries
+merge_gitignore() {
+  local source="$1"
   if [ -f .gitignore ]; then
     while IFS= read -r line; do
       if [ -n "$line" ] && ! grep -qF "$line" .gitignore 2>/dev/null; then
         echo "$line" >> .gitignore
       fi
-    done < "$TEMP_GITIGNORE"
+    done < "$source"
   else
-    cp "$TEMP_GITIGNORE" ./.gitignore
+    cp "$source" ./.gitignore
   fi
-  rm -f "$TEMP_GITIGNORE"
+}
 
-  # .claude directory — download each file
-  mkdir -p .claude/{agents,commands,rules,skills,hooks/scripts}
+if is_remote; then
+  # Remote mode — clone to tmp, copy harness files, clean up
+  HARNESS_TMP=$(mktemp -d)
+  log "Cloning harness repo to temp directory..."
+  git clone --depth 1 "$REPO_URL" "$HARNESS_TMP" 2>/dev/null
 
-  fetch_file ".claude/settings.json"                     ".claude/settings.json"
-  fetch_file ".claude/agents/component-builder.md"       ".claude/agents/component-builder.md"
-  fetch_file ".claude/agents/feature-reviewer.md"        ".claude/agents/feature-reviewer.md"
-  fetch_file ".claude/commands/new-feature.md"           ".claude/commands/new-feature.md"
-  fetch_file ".claude/commands/debug.md"                 ".claude/commands/debug.md"
-  fetch_file ".claude/commands/design-system.md"         ".claude/commands/design-system.md"
-  fetch_file ".claude/commands/clarify-business.md"      ".claude/commands/clarify-business.md"
-  fetch_file ".claude/commands/quality-check.md"         ".claude/commands/quality-check.md"
-  fetch_file ".claude/rules/frontend-conventions.md"     ".claude/rules/frontend-conventions.md"
-  fetch_file ".claude/rules/state-management.md"         ".claude/rules/state-management.md"
-  fetch_file ".claude/rules/openspec-workflow.md"        ".claude/rules/openspec-workflow.md"
-  fetch_file ".claude/rules/debugging.md"                ".claude/rules/debugging.md"
-  fetch_file ".claude/rules/git-workflow.md"             ".claude/rules/git-workflow.md"
+  cp "$HARNESS_TMP/CLAUDE.md" ./CLAUDE.md
+  cp -r "$HARNESS_TMP/.claude" ./.claude
+  merge_gitignore "$HARNESS_TMP/.gitignore"
 
+  # Clean up
+  rm -rf "$HARNESS_TMP"
 else
   # Local mode — copy from cloned repo
   cp "$SCRIPT_DIR/CLAUDE.md" ./CLAUDE.md
   cp -r "$SCRIPT_DIR/.claude" ./.claude
-
-  if [ -f .gitignore ]; then
-    while IFS= read -r line; do
-      if [ -n "$line" ] && ! grep -qF "$line" .gitignore 2>/dev/null; then
-        echo "$line" >> .gitignore
-      fi
-    done < "$SCRIPT_DIR/.gitignore"
-  else
-    cp "$SCRIPT_DIR/.gitignore" ./.gitignore
-  fi
+  merge_gitignore "$SCRIPT_DIR/.gitignore"
 fi
 
 success "Claude Code harness installed"
@@ -305,6 +278,7 @@ echo "  Claude Code commands:"
 echo "    /new-feature     # Brainstorm → OpenSpec propose → implement → ship"
 echo "    /debug           # Debug a bug systematically"
 echo "    /design-system   # Init or extend the design system"
+echo "    /clarify-business # Document business domain knowledge"
 echo "    /quality-check   # Run all quality gates"
 echo ""
 echo "  OpenSpec commands:"
