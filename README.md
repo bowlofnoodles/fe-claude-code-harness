@@ -72,9 +72,9 @@ cd fe-claude-code-harness
 
 </details>
 
-### :syringe: 存量项目（任意技术栈）
+### :syringe: 存量项目(任意技术栈)
 
-已有项目只需注入 harness 骨架，不改动项目代码和依赖：
+已有项目只需注入 harness 骨架,不改动项目代码和依赖:
 
 ```bash
 # 在项目根目录执行
@@ -86,6 +86,27 @@ curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harnes
 cd my-existing-project
 /path/to/install.sh --inject
 ```
+
+#### 前端代码在子目录的情况
+
+如果你的前端代码不在仓库根目录,而是在 `fe/` 或 `frontend/` 等子目录中:
+
+```bash
+# 在仓库根目录执行,指定前端代码目录
+curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- --inject fe
+
+```
+``` bash
+# 或者本地执行
+cd /path/to/repo-root
+./install.sh --inject fe
+```
+
+这样会:
+- 在仓库根目录创建 `.claude/` 目录
+- 在 `settings.json` 中设置 `FRONTEND_DIR` 环境变量指向前端目录
+- 在 `CLAUDE.md` 中注明前端代码位置
+- `/init-project` 会自动从正确的目录读取配置
 
 <details>
 <summary>:mag: <code>--inject</code> 做了什么</summary>
