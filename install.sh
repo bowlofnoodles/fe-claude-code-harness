@@ -28,6 +28,13 @@ is_remote() {
   [ ! -f "$SCRIPT_DIR/CLAUDE.md" ] 2>/dev/null
 }
 
+# Detect whether SCRIPT_DIR actually contains harness files
+has_local_harness_files() {
+  [ -f "$SCRIPT_DIR/.claude/commands/new-feature.md" ] \
+    && [ -f "$SCRIPT_DIR/.claude/commands/debug.md" ] \
+    && [ -f "$SCRIPT_DIR/.claude/rules/openspec-workflow.md" ]
+}
+
 # Helper: merge .gitignore entries
 merge_gitignore() {
   local source="$1"
@@ -44,9 +51,12 @@ merge_gitignore() {
 
 # Helper: get harness source directory (local or clone to tmp)
 get_harness_dir() {
-  if is_remote; then
+  if is_remote || ! has_local_harness_files; then
+    if ! is_remote; then
+      warn "Local install.sh was found outside harness repo; falling back to remote harness source." >&2
+    fi
     HARNESS_TMP=$(mktemp -d)
-    log "Cloning harness repo to temp directory..."
+    log "Cloning harness repo to temp directory..." >&2
     git clone --depth 1 "$REPO_URL" "$HARNESS_TMP" 2>/dev/null
     echo "$HARNESS_TMP"
   else
