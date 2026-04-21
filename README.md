@@ -47,6 +47,9 @@
 # 远程一键安装
 curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- my-new-app
 
+
+```
+``` bash
 # 或者先克隆再执行
 git clone git@github.com:bowlofnoodles/fe-claude-code-harness.git
 cd fe-claude-code-harness
@@ -77,6 +80,8 @@ cd fe-claude-code-harness
 # 在项目根目录执行
 curl -fsSL https://raw.githubusercontent.com/bowlofnoodles/fe-claude-code-harness/main/install.sh | bash -s -- --inject
 
+```
+``` bash
 # 或者
 cd my-existing-project
 /path/to/install.sh --inject
