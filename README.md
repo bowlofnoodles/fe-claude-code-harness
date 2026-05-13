@@ -123,15 +123,15 @@ cd /path/to/repo-root
 
 </details>
 
-注入后打开 Claude Code，执行 `/init-project`：
+注入后打开 Claude Code，执行 `/noodles:init-project`：
 
 ```bash
 claude
 # 在 Claude Code 中执行：
-/init-project
+/noodles:init-project
 ```
 
-`/init-project` 会自动：
+`/noodles:init-project` 会自动：
 - 读取 `package.json`、`tsconfig.json`、配置文件等
 - 识别框架、构建工具、包管理器、测试框架、样式方案
 - 生成定制化的 `CLAUDE.md`（正确的命令和规范）
@@ -148,12 +148,12 @@ claude
 
 ## :repeat: 开发工作流
 
-### :star2: 功能开发（`/new-feature`）
+### :star2: 功能开发（`/noodles:new-feature`）
 
 核心流程将 Superpowers 脑暴与 OpenSpec 规格驱动开发串联起来：
 
 ```
-                    /new-feature "用户登录页"
+                    /noodles:new-feature "用户登录页"
                               |
                 +-------------+-------------+
                 |  阶段 1：脑暴              |
@@ -186,10 +186,10 @@ claude
                 +---------------------------+
 ```
 
-### :bug: 修复 Bug（`/debug`）
+### :bug: 修复 Bug（`/noodles:debug`）
 
 ```
-/debug "登录后页面白屏"
+/noodles:debug "登录后页面白屏"
     |
     +-- 复现  -> 确认 bug 可以稳定触发
     +-- 定位  -> superpowers:systematic-debugging
@@ -197,10 +197,10 @@ claude
     +-- 验证  -> superpowers:verification-before-completion
 ```
 
-### :art: 设计系统（`/design-system`）
+### :art: 设计系统（`/noodles:design-system`）
 
 ```
-/design-system init
+/noodles:design-system init
     |
     +-- 个人项目？ -> 从 getdesign.md 获取设计 token
     +-- 客户项目？ -> 从原型图提取设计 token
@@ -209,10 +209,10 @@ claude
     +-- 生成基础组件（Button、Input、Card……）
 ```
 
-### :briefcase: 业务知识澄清（`/clarify-business`）
+### :briefcase: 业务知识澄清（`/noodles:clarify-business`）
 
 ```
-/clarify-business "订单流程"
+/noodles:clarify-business "订单流程"
     |
     +-- 交互式问答，澄清领域术语和业务规则
     +-- 核心规则   -> .claude/rules/business-context.md（自动加载）
@@ -223,16 +223,18 @@ claude
 
 ## :keyboard: 命令参考
 
+> 📖 **完整使用文档**：查看 [HARNESS_USAGE.md](./HARNESS_USAGE.md) 获取详细的命令说明、工作流程和最佳实践。
+
 ### :robot: Claude Code 命令
 
 | 命令 | 说明 |
 |------|------|
-| `/init-project` | 自动检测技术栈，生成定制化 `CLAUDE.md` + rules（存量项目必用） |
-| `/new-feature <描述>` | 完整流程：脑暴 -> OpenSpec 提案 -> 实现 -> 交付 |
-| `/debug <描述>` | 系统化调试：复现 -> 定位 -> 诊断 -> 修复 -> 验证 |
-| `/design-system <名称\|init>` | 初始化设计系统或新增组件 |
-| `/clarify-business <主题>` | 交互式问答，记录业务领域知识 |
-| `/quality-check` | 运行 lint、type-check、test、build 全部质量门禁 |
+| `/noodles:init-project` | 自动检测技术栈，生成定制化 `CLAUDE.md` + rules（存量项目必用） |
+| `/noodles:new-feature <描述>` | 完整流程：脑暴 -> OpenSpec 提案 -> 实现 -> 交付 |
+| `/noodles:debug <描述>` | 系统化调试：复现 -> 定位 -> 诊断 -> 修复 -> 验证 |
+| `/noodles:design-system <名称\|init>` | 初始化设计系统或新增组件 |
+| `/noodles:clarify-business <主题>` | 交互式问答，记录业务领域知识 |
+| `/noodles:quality-check` | 运行 lint、type-check、test、build 全部质量门禁 |
 
 ### :scroll: OpenSpec 命令
 
