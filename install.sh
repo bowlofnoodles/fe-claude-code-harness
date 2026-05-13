@@ -46,7 +46,7 @@ merge_gitignore() {
 get_harness_dir() {
   if is_remote; then
     HARNESS_TMP=$(mktemp -d)
-    log "Cloning harness repo to temp directory..."
+    log "Cloning harness repo to temp directory..." >&2
     git clone --depth 1 "$REPO_URL" "$HARNESS_TMP" 2>/dev/null
     echo "$HARNESS_TMP"
   else
