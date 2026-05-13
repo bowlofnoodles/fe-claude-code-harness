@@ -89,19 +89,21 @@ print_commands() {
   echo -e "  ${YELLOW}[!] If Superpowers didn't auto-install, run this in Claude Code:${NC}"
   echo "    /plugin install superpowers@claude-plugins-official"
   echo ""
-  echo -e "  ${CYAN}Claude Code commands:${NC}"
-  echo -e "    ${GREEN}/init-project${NC}     # Auto-detect stack and generate CLAUDE.md + rules"
-  echo -e "    ${GREEN}/new-feature${NC}      # Brainstorm → OpenSpec propose → implement → ship"
-  echo -e "    ${GREEN}/debug${NC}            # Debug a bug systematically"
-  echo -e "    ${GREEN}/design-system${NC}    # Init or extend the design system"
-  echo -e "    ${GREEN}/clarify-business${NC} # Document business domain knowledge"
-  echo -e "    ${GREEN}/quality-check${NC}    # Run all quality gates"
+  echo -e "  ${CYAN}Claude Code commands (with 'noodles:' prefix):${NC}"
+  echo -e "    ${GREEN}/noodles:init-project${NC}     # Auto-detect stack and generate CLAUDE.md + rules"
+  echo -e "    ${GREEN}/noodles:new-feature${NC}      # Brainstorm → OpenSpec propose → implement → ship"
+  echo -e "    ${GREEN}/noodles:debug${NC}            # Debug a bug systematically"
+  echo -e "    ${GREEN}/noodles:design-system${NC}    # Init or extend the design system"
+  echo -e "    ${GREEN}/noodles:clarify-business${NC} # Document business domain knowledge"
+  echo -e "    ${GREEN}/noodles:quality-check${NC}    # Run all quality gates"
   echo ""
-  echo -e "  ${CYAN}OpenSpec commands:${NC}"
+  echo -e "  ${CYAN}OpenSpec commands (no prefix):${NC}"
   echo -e "    ${GREEN}/opsx:propose${NC}     # Create structured spec + design + tasks"
   echo -e "    ${GREEN}/opsx:apply${NC}       # Implement from tasks.md"
   echo -e "    ${GREEN}/opsx:verify${NC}      # Validate implementation vs specs"
   echo -e "    ${GREEN}/opsx:archive${NC}     # Finalize and archive change"
+  echo ""
+  echo -e "  ${YELLOW}📖 See HARNESS_USAGE.md for complete usage guide${NC}"
   echo ""
 }
 
@@ -226,6 +228,9 @@ SETTINGS_EOF
   # Create docs directories
   mkdir -p docs/{plans,business}
 
+  # Copy usage documentation
+  cp "$HARNESS_SRC/HARNESS_USAGE.md" ./HARNESS_USAGE.md
+
   # Copy init-project command (critical for inject mode)
   # This is already in the commands we copied above
 
@@ -312,7 +317,9 @@ SKELETON_EOF
   echo ""
   echo "  Next steps:"
   echo -e "    1. ${GREEN}claude${NC}                # Open Claude Code"
-  echo -e "    2. ${GREEN}/init-project${NC}         # Auto-detect stack, generate CLAUDE.md + rules"
+  echo -e "    2. ${GREEN}/noodles:init-project${NC} # Auto-detect stack, generate CLAUDE.md + rules"
+  echo ""
+  echo -e "  📖 ${CYAN}Read HARNESS_USAGE.md for complete command reference and workflows${NC}"
   echo ""
   print_commands
 }
@@ -473,6 +480,7 @@ require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n')
   HARNESS_SRC=$(get_harness_dir)
 
   cp "$HARNESS_SRC/CLAUDE.md" ./CLAUDE.md
+  cp "$HARNESS_SRC/HARNESS_USAGE.md" ./HARNESS_USAGE.md
   cp -r "$HARNESS_SRC/.claude" ./.claude
   merge_gitignore "$HARNESS_SRC/.gitignore"
 

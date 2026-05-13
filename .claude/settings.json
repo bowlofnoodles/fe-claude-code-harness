@@ -1,4 +1,5 @@
 {
+  "skillNamePrefix": "noodles",
   "permissions": {
     "allow": [
       "Edit(*)",
