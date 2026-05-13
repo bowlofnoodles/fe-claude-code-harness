@@ -106,7 +106,7 @@ cd /path/to/repo-root
 - 在仓库根目录创建 `.claude/` 目录
 - 在 `settings.json` 中设置 `FRONTEND_DIR` 环境变量指向前端目录
 - 在 `CLAUDE.md` 中注明前端代码位置
-- `/init-project` 会自动从正确的目录读取配置
+- `/noodles:init-project` 会自动从正确的目录读取配置
 
 <details>
 <summary>:mag: <code>--inject</code> 做了什么</summary>
@@ -114,7 +114,7 @@ cd /path/to/repo-root
 | 步骤 | 操作 |
 |:----:|------|
 | 1 | :robot: 注入 `.claude/` 目录（commands、agents、通用 rules） |
-| 2 | :page_facing_up: 创建骨架 `CLAUDE.md`（待 `/init-project` 填充） |
+| 2 | :page_facing_up: 创建骨架 `CLAUDE.md`（待 `/noodles:init-project` 填充） |
 | 3 | :shield: 创建最小化 `settings.json`（通用权限） |
 | 4 | :scroll: 安装 OpenSpec + `openspec init` |
 | 5 | :sparkles: 安装 Superpowers 插件 |
@@ -304,12 +304,12 @@ npm install -g @fission-ai/openspec@latest
 │   ├── testing-strategy.md        # 测试策略：什么时候必须写测试、TDD 流程
 │   └── git-workflow.md            # 分支和提交规范
 ├── commands/                      # 斜杠命令（工作流）
-│   ├── init-project.md             # /init-project — 自动检测技术栈，生成配置
-│   ├── new-feature.md             # /new-feature — 完整功能开发流程
-│   ├── debug.md                   # /debug — 系统化 bug 修复
-│   ├── design-system.md           # /design-system — 初始化或扩展设计系统
-│   ├── clarify-business.md        # /clarify-business — 记录业务领域知识
-│   └── quality-check.md           # /quality-check — 运行全部质量门禁
+│   ├── noodles:init-project.md    # /noodles:init-project — 自动检测技术栈，生成配置
+│   ├── noodles:new-feature.md     # /noodles:new-feature — 完整功能开发流程
+│   ├── noodles:debug.md           # /noodles:debug — 系统化 bug 修复
+│   ├── noodles:design-system.md   # /noodles:design-system — 初始化或扩展设计系统
+│   ├── noodles:clarify-business.md  # /noodles:clarify-business — 记录业务领域知识
+│   └── noodles:quality-check.md   # /noodles:quality-check — 运行全部质量门禁
 └── agents/                        # 子代理
     ├── component-builder.md       # 构建 UI 组件（使用 Sonnet）
     └── feature-reviewer.md        # 代码审查（自动触发）
@@ -350,7 +350,7 @@ npm install -g @fission-ai/openspec@latest
 | :house: 个人项目 | [getdesign.md](https://getdesign.md) | `DESIGN.md` -> `tailwind.config.ts` |
 | :office: 客户项目 | 原型图 / 设计稿 | `DESIGN.md` -> `tailwind.config.ts` |
 
-执行 `/design-system init` 生成 `DESIGN.md` 和基础组件（`Button`、`Input`、`Card` 等）
+执行 `/noodles:design-system init` 生成 `DESIGN.md` 和基础组件（`Button`、`Input`、`Card` 等）
 
 ---
 
